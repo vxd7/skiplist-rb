@@ -18,15 +18,15 @@ class SkipList
 
     (0...current_node.level).reverse_each do |level|
       loop do
-        break if current_node.forward[level].key >= search_key
+        break if current_node.forward_ptr_at(level).key >= search_key
 
-        current_node = current_node.forward[level]
+        current_node = current_node.forward_ptr_at(level)
       end
 
       yield(level, current_node) if block_given?
     end
 
-    current_node = current_node.forward[0]
+    current_node = current_node.first_level_ptr
     return current_node if current_node.key == search_key
 
     nil
@@ -49,7 +49,7 @@ class SkipList
 
     new_node = Node.new(search_key, new_value)
     (0..new_level).each do |level|
-      new_node.forward[level] = update[level].forward[level]
+      new_node.forward[level] = update[level].forward_ptr_at(level)
       update[level].forward[level] = new_node
     end
     # puts "Insert search_key: #{search_key}, new_value: #{new_value}, new_level: #{new_level}: SUCCESS"
@@ -71,7 +71,7 @@ class SkipList
   end
 
   def header
-    @header ||= Node.new(-Float::INFINITY, nil, finish)
+    @header ||= Node.new(-Float::INFINITY, nil, default: finish)
   end
 
   def finish
@@ -102,12 +102,12 @@ class SkipList
 
   def fetch_level(level)
     elements = [header]
-    elem = header.forward[level]
+    elem = header.forward_ptr_at(level)
     loop do
       break unless elem
 
       elements.append(elem)
-      elem = elem.forward[level]
+      elem = elem.forward_ptr_at(level)
     end
 
     elements
