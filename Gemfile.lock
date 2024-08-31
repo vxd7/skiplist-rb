@@ -8,6 +8,7 @@ GEM
     irb (1.14.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
+    minitest (5.25.1)
     psych (5.1.2)
       stringio
     rdoc (6.7.0)
@@ -22,6 +23,7 @@ PLATFORMS
 
 DEPENDENCIES
   debug (>= 1.0.0)
+  minitest
 
 BUNDLED WITH
    2.5.11

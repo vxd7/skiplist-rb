@@ -22,9 +22,5 @@ class SkipList
     def inspect
       "#<SkipList::Node of level #{level} with @key = #{key}, @value = #{value}>"
     end
-
-    def <=>(other)
-      key <=> other.key
-    end
   end
 end
