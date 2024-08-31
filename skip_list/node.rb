@@ -5,14 +5,10 @@ class SkipList
     attr_reader :key, :forward
     attr_accessor :value
 
-    def initialize(key, value)
+    def initialize(key, value, default_ptr = nil)
       @key = key
       @value = value
-      @forward = []
-    end
-
-    def add(node)
-      forward << node
+      @forward = Hash.new(default_ptr)
     end
 
     def level

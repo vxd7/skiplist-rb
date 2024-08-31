@@ -2,8 +2,7 @@ require 'singleton'
 require 'set'
 require 'debug'
 
-require_relative 'skip_list/header_node'
-require_relative 'skip_list/finish_node'
+require_relative 'skip_list/node'
 
 class SkipList
   attr_reader :max_level, :random_level
@@ -27,7 +26,7 @@ class SkipList
       yield(level, current_node) if block_given?
     end
 
-    current_node = current_node.forward.first
+    current_node = current_node.forward[0]
     return current_node if current_node.key == search_key
 
     nil
@@ -72,11 +71,11 @@ class SkipList
   end
 
   def header
-    @header ||= HeaderNode.instance
+    @header ||= Node.new(-Float::INFINITY, nil, finish)
   end
 
   def finish
-    @finish ||= FinishNode.instance
+    @finish ||= Node.new(Float::INFINITY, nil)
   end
 
   def pretty_print
