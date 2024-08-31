@@ -11,9 +11,6 @@ end
 
 r.each do |e|
   sl[e] = e.to_s
-  # sl.insert(e, e.to_s)
 end
 
-binding.b
 puts sl.pretty_print
-
