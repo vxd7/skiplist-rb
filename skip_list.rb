@@ -3,22 +3,22 @@ require 'set'
 require 'debug'
 
 require_relative 'skip_list/node'
+require_relative 'skip_list/level_number_generator'
 
 class SkipList
-  attr_reader :max_level, :random_level
+  attr_reader :max_level, :level_number_generator
 
   def initialize(max_level = 32, &block)
     @max_level = max_level
-    @random_level = block if block_given?
+    @level_number_generator = block_given? ? block : LevelNumberGenerator
   end
 
   def search(search_key)
-    # puts "Search for search_key: #{search_key}"
     current_node = header
 
-    (0...current_node.level).reverse_each do |level|
+    (0...level).reverse_each do |level|
       current_node.traverse_level(level) do |node|
-        break node if node.key >= search_key
+        break if node.key >= search_key
 
         current_node = node
       end
@@ -26,7 +26,7 @@ class SkipList
       yield(level, current_node) if block_given?
     end
 
-    current_node = current_node.first_level_ptr
+    current_node = current_node.forward_ptr_at(0)
     return current_node if current_node.key == search_key
 
     nil
@@ -34,13 +34,11 @@ class SkipList
   alias [] search
 
   def insert(search_key, new_value)
-    # puts "Insert search_key: #{search_key}, new_value: #{new_value}: searching..."
     update = []
     node = search(search_key) { |i, x| update[i] = x }
     return node.value = new_value if node
 
-    new_level = fetch_random_level
-    # puts "Insert search_key: #{search_key}, new_value: #{new_value}, new_level: #{new_level}"
+    new_level = level_number_generator.call(max_level)
     if new_level >= header.level
       (header.level..new_level).each do |level|
         update[level] = header
@@ -52,22 +50,15 @@ class SkipList
       new_node.forward[level] = update[level].forward_ptr_at(level)
       update[level].forward[level] = new_node
     end
-    # puts "Insert search_key: #{search_key}, new_value: #{new_value}, new_level: #{new_level}: SUCCESS"
   end
   alias []= insert
 
-  def fetch_random_level
-    return random_level.call if random_level
-
-    lvl = 0
-    loop do
-      break if rand >= 0.5
-      break if lvl >= max_level
-
-      lvl += 1
-    end
-
-    lvl
+  # The level of SkipList is equal to the level
+  # of its header due to the fact that header is present
+  # on every level of the Skiplist
+  #
+  def level
+    header.level
   end
 
   def header

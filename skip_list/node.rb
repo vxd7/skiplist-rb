@@ -15,10 +15,6 @@ class SkipList
       forward.fetch(lvl, default_ptr)
     end
 
-    def first_level_ptr
-      forward_ptr_at(0)
-    end
-
     def level
       forward.size
     end
