@@ -6,11 +6,13 @@ require_relative 'skip_list/node'
 require_relative 'skip_list/level_number_generator'
 
 class SkipList
-  attr_reader :max_level, :level_number_generator
+  attr_reader :max_level, :level_number_generator, :size
 
   def initialize(max_level = 32, &block)
     @max_level = max_level
     @level_number_generator = block_given? ? block : LevelNumberGenerator
+
+    @size = 0
   end
 
   def search(search_key)
@@ -35,12 +37,17 @@ class SkipList
 
   def insert(search_key, new_value)
     update = []
-    node = search(search_key) { |i, x| update[i] = x }
+    node = search(search_key) do |level, element|
+      update[level] = element
+    end
+
     return node.value = new_value if node
 
+    @size += 1
+
     new_level = level_number_generator.call(max_level)
-    if new_level >= header.level
-      (header.level..new_level).each do |level|
+    if new_level >= level
+      (level..new_level).each do |level|
         update[level] = header
       end
     end
@@ -53,9 +60,11 @@ class SkipList
   end
   alias []= insert
 
-  # The level of SkipList is equal to the level
-  # of its header due to the fact that header is present
-  # on every level of the Skiplist
+  # The level of SkipList.
+  #
+  # It is equal to the level of its header due to the
+  # fact that header is present on every level of the
+  # Skiplist
   #
   def level
     header.level
