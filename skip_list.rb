@@ -70,7 +70,7 @@ class SkipList
   end
 
   def pretty_print
-    rows = [fetch_level(0)[1...-1]]
+    rows = [header.traverse_level(0).to_a[1...-1]]
     rows[0].each do |element|
       lvl = element.level - 1
       (1..lvl).each do |i|
@@ -89,18 +89,5 @@ class SkipList
 
       ["L#{i}:", 'H', *(e.map { |ee| ee ? ee.key : nil }), 'F'].join("\t")
     end.compact.join("\n")
-  end
-
-  def fetch_level(level)
-    elements = [header]
-    elem = header.forward_ptr_at(level)
-    loop do
-      break unless elem
-
-      elements.append(elem)
-      elem = elem.forward_ptr_at(level)
-    end
-
-    elements
   end
 end
