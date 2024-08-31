@@ -17,10 +17,10 @@ class SkipList
     current_node = header
 
     (0...current_node.level).reverse_each do |level|
-      loop do
-        break if current_node.forward_ptr_at(level).key >= search_key
+      current_node.traverse_level(level) do |node|
+        break node if node.key >= search_key
 
-        current_node = current_node.forward_ptr_at(level)
+        current_node = node
       end
 
       yield(level, current_node) if block_given?

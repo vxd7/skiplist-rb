@@ -23,8 +23,21 @@ class SkipList
       forward.size
     end
 
+    def traverse_level(lvl)
+      return to_enum(:traverse_level, lvl) unless block_given?
+
+      current_node = self
+      loop do
+        yield(current_node)
+        break unless current_node.forward_ptr_at(lvl)
+
+        current_node = current_node.forward[lvl]
+      end
+    end
+
     def inspect
-      "#<SkipList::Node of level #{level} with @key = #{key}, @value = #{value}>"
+      "#<SkipList::Node of level #{level} " \
+        "with @key = #{key}, @value = #{value}>"
     end
 
     private
