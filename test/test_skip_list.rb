@@ -14,7 +14,7 @@ class TestSkipList < Minitest::Test
     elem = rand(100)
     skiplist.insert(elem, elem.to_s)
    
-    assert_equal(skiplist[elem].value, elem.to_s)
+    assert_equal(elem.to_s, skiplist[elem].value)
   end
 
   def test_search_value_not_exists
@@ -39,7 +39,7 @@ class TestSkipList < Minitest::Test
     elems.each { |elem| skiplist[elem] = elem.to_s }
 
     elems.each do |elem|
-      assert_equal(skiplist[elem].value, elem.to_s)
+      assert_equal(elem.to_s, skiplist[elem].value)
     end
   end
 
@@ -49,6 +49,15 @@ class TestSkipList < Minitest::Test
 
     new_value = 'abacaba'
     skiplist[elem] = new_value
-    assert_equal(skiplist[elem].value, new_value)
+    assert_equal(new_value, skiplist[elem].value)
+  end
+
+  def test_single_level_pretty_print
+    @skiplist = SkipList.new { 0 }
+    elem = rand(100)
+    skiplist[elem] = elem.to_s
+
+    str = "L0:\tH\t#{elem}\tF"
+    assert_equal(str, skiplist.pretty_print)
   end
 end

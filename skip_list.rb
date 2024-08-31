@@ -2,13 +2,15 @@ require 'singleton'
 require 'set'
 require 'debug'
 
-require_relative 'skip_list/node'
 require_relative 'skip_list/header_node'
 require_relative 'skip_list/finish_node'
 
 class SkipList
-  def initialize(max_level = 32)
+  attr_reader :max_level, :random_level
+
+  def initialize(max_level = 32, &block)
     @max_level = max_level
+    @random_level = block if block_given?
   end
 
   def search(search_key)
@@ -56,10 +58,12 @@ class SkipList
   alias []= insert
 
   def fetch_random_level
+    return random_level.call if random_level
+
     lvl = 0
     loop do
       break if rand >= 0.5
-      break if lvl >= @max_level
+      break if lvl >= max_level
 
       lvl += 1
     end
@@ -93,8 +97,7 @@ class SkipList
     rows.map.with_index do |e, i|
       next if e.compact.empty?
 
-      vals = ["L#{i}:", 'H', *(e.map { |ee| ee ? ee.key : nil }), 'F']
-      vals.join("\t")
+      ["L#{i}:", 'H', *(e.map { |ee| ee ? ee.key : nil }), 'F'].join("\t")
     end.compact.join("\n")
   end
 
