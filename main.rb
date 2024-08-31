@@ -1,60 +1,14 @@
 require 'singleton'
 require 'set'
+require 'debug'
+
+require_relative 'skip_list/node'
+require_relative 'skip_list/header_node'
+require_relative 'skip_list/finish_node'
 
 class SkipList
-  class Node
-    include Comparable
-
-    attr_reader :key, :forward
-    attr_accessor :value
-
-    def initialize(key, value)
-      @key = key
-      @value = value
-      @forward = []
-    end
-
-    def add(node)
-      forward << node
-    end
-
-    def level
-      forward.size
-    end
-
-    def inspect
-      "#<SkipList::Node @key = #{key}, @value = #{value}, @forward = #{forward}>"
-    end
-
-    def <=>(other)
-      key <=> other.key
-    end
-  end
-
-  class HeaderNode < Node
-    include Singleton
-
-    def initialize
-      super(-Float::INFINITY, nil)
-      @forward = Array.new(32, FinishNode.instance)
-    end
-
-    def inspect
-      "#<SkipList::HeaderNode>"
-    end
-  end
-
-  class FinishNode < Node
-    include Singleton
-
-    def initialize
-      super(Float::INFINITY, nil)
-    end
-  end
-
   def initialize(max_level = 32)
     @max_level = max_level
-    header.add(finish)
   end
 
   def search(search_key)
@@ -76,6 +30,7 @@ class SkipList
 
     nil
   end
+  alias [] search
 
   def insert(search_key, new_value)
     # puts "Insert search_key: #{search_key}, new_value: #{new_value}: searching..."
@@ -98,6 +53,7 @@ class SkipList
     end
     # puts "Insert search_key: #{search_key}, new_value: #{new_value}, new_level: #{new_level}: SUCCESS"
   end
+  alias []= insert
 
   def fetch_random_level
     lvl = 0
@@ -134,12 +90,12 @@ class SkipList
       end
     end
 
-    rows.each_with_index do |e, i|
+    rows.map.with_index do |e, i|
       next if e.compact.empty?
 
       vals = ["L#{i}:", 'H', *(e.map { |ee| ee ? ee.key : nil }), 'F']
-      puts vals.join("\t")
-    end
+      vals.join("\t")
+    end.compact.join("\n")
   end
 
   def fetch_level(level)
@@ -160,10 +116,15 @@ sl = SkipList.new
 
 r = Set.new
 loop do
-  break if r.size >= 40
+  break if r.size >= 45
 
   r << rand(500)
 end
 
-r.each { |e| sl.insert(e, 'e') }
-sl.pretty_print
+r.each do |e|
+  sl[e] = e.to_s
+  # sl.insert(e, e.to_s)
+end
+
+binding.b
+puts sl.pretty_print
