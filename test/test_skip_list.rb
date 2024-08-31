@@ -47,7 +47,7 @@ class TestSkipList < Minitest::Test
   end
 
   def test_skip_list_level
-    target_level = rand(20)
+    target_level = 1 + rand(20)
     @skiplist = SkipList.new { target_level }
     fill_skiplist(10)
 
@@ -55,7 +55,7 @@ class TestSkipList < Minitest::Test
   end
 
   def test_skip_list_strictly_ordered_at_every_level
-    fill_skiplist(100)
+    fill_skiplist(1000)
 
     (0...skiplist.level).each do |lvl|
       assert(
@@ -71,6 +71,17 @@ class TestSkipList < Minitest::Test
   def test_size_when_filled
     target_size = rand(1000)
     fill_skiplist(target_size)
+
+    assert_equal(target_size, skiplist.size)
+  end
+
+  def test_size_not_incrementing_after_elements_modification
+    target_size = 1 + rand(100)
+    elems = fill_skiplist(target_size)
+
+    elems.to_a.sample(rand(20)).each do |element|
+      skiplist[element] = 'abacaba'
+    end
 
     assert_equal(target_size, skiplist.size)
   end
