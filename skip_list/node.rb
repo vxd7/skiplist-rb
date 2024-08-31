@@ -1,15 +1,14 @@
 class SkipList
   class Node
-    include Comparable
-
     attr_reader :key, :forward
     attr_accessor :value
 
     def initialize(key, value, default: nil)
       @key = key
       @value = value
-      @default_ptr = default
       @forward = []
+
+      @default_ptr = default
     end
 
     def forward_ptr_at(lvl)
