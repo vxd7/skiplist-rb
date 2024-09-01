@@ -13,7 +13,12 @@ class SkipList
       end
     end
 
-    # Generate geometric distribution using manual trials
+    # Generate geometric distribution using manual
+    # trial emulation.
+    #
+    # This method can be considered inefficient and
+    # will require on average 1/p random numbers
+    # to be generated
     #
     module NaiveGeometric
       def self.call(max_level, p)
