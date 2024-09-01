@@ -28,22 +28,47 @@ class SkipList
     @size = 0
   end
 
+  # Search SkipList element by its key
+  #
+  # @param search_key [Integer] the key to search for
+  # @return [SkipList::Node, NilClass] will return the
+  #   {SkipList::Node} object if the element is found
+  #   and nil otherwise
+  #
   def search(search_key)
     current_node = header
 
+    # Traverse levels starting with the highest
+    # (with lowest number of elements)
+    #
     (0...level).reverse_each do |level|
       current_node.traverse_level(level) do |node|
-        break if node.key >= search_key
+        # Stop iterating levels when we have already found
+        # the element
+        #
+        return node if node.key == search_key
 
+        # Level change to lower level is needed if the
+        # current element is larger than the one searched for
+        #
+        break if node.key > search_key
+
+        # Current element key is lower than the searched for
+        # key. Continue iteration on the current level
+        #
         current_node = node
       end
 
+      # Yield the element just before the level transition
+      #
+      # It is useful for some applications to record the
+      # route the search takes
+      #
       yield(level, current_node) if block_given?
     end
 
-    current_node = current_node.forward_ptr_at(0)
-    return current_node if current_node.key == search_key
-
+    # search_key does not exist in the list
+    #
     nil
   end
   alias [] search
