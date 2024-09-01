@@ -1,9 +1,12 @@
 require 'set'
+require 'debug'
 require 'minitest/autorun'
 
 require_relative '../skip_list'
 
 class TestSkipList < Minitest::Test
+  include SkipList::LevelNumberGenerators
+
   attr_reader :skiplist
 
   def setup
@@ -39,7 +42,9 @@ class TestSkipList < Minitest::Test
   end
 
   def test_single_level_pretty_print
-    @skiplist = SkipList.new { 0 }
+    @skiplist = SkipList.new
+    @skiplist.level_number_generator = SimpleDeterministic.new(0)
+
     elem = fill_skiplist(1)
 
     str = "L0:\tH\t#{elem}\tF"
@@ -48,7 +53,9 @@ class TestSkipList < Minitest::Test
 
   def test_skip_list_level
     target_level = 1 + rand(20)
-    @skiplist = SkipList.new { target_level }
+    @skiplist = SkipList.new
+    @skiplist.level_number_generator = SimpleDeterministic.new(target_level)
+
     fill_skiplist(10)
 
     assert_equal(target_level + 1, skiplist.level)
@@ -84,6 +91,17 @@ class TestSkipList < Minitest::Test
     end
 
     assert_equal(target_size, skiplist.size)
+  end
+
+  def test_insert_carefully
+    @skiplist = SkipList.new
+    @skiplist.level_number_generator = SimpleDeterministic.new([4, 3, 2])
+
+    skiplist[2] = '2'
+    skiplist[4] = '4'
+    skiplist[3] = '3'
+    
+    assert_equal('3', skiplist[3].value)
   end
 
   private

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'singleton'
 require 'set'
 require 'debug'
@@ -6,14 +8,27 @@ require_relative 'skip_list/node'
 require_relative 'skip_list/level_number_generators'
 
 class SkipList
-  attr_reader :max_level, :p_value, :level_number_generator, :size
+  attr_accessor :level_number_generator
+  attr_reader :size, :default_value
 
-  def initialize(max_level = 32, p_value = 0.5, &block)
-    @max_level = max_level
-    @p_value = p_value
+  # Default maximum number of levels possible in the
+  # skiplist
+  #
+  DEFAULT_MAX_LEVEL = 32
+
+  # Default parameter for Geometric distribution
+  # used for new level number generation
+  #
+  DEFAULT_P_VALUE = 0.5
+
+  # Create new SkipList
+  #
+  def initialize
     @level_number_generator =
-      block_given? ? block : LevelNumberGenerators::InverseTransformGeometric
-
+      LevelNumberGenerators::InverseTransformGeometric.new(
+        max_level: DEFAULT_MAX_LEVEL,
+        p_value: DEFAULT_P_VALUE
+      )
     @size = 0
   end
 
@@ -47,7 +62,7 @@ class SkipList
 
     @size += 1
 
-    new_level = level_number_generator.call(max_level, p_value)
+    new_level = level_number_generator.call(self)
     if new_level >= level
       (level..new_level).each do |level|
         update[level] = header
