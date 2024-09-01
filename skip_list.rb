@@ -73,16 +73,27 @@ class SkipList
   end
   alias [] search
 
+  # Add new element to skiplist or change the value
+  # of existing element
+  #
+  # @param search_key [Integer]
+  # @param new_value [Object]
+  #
+  # @return [SkipList::Node] newly added or
+  #   existing changed node
+  #
   def insert(search_key, new_value)
     update = []
     node = search(search_key) do |level, element|
       update[level] = element
     end
 
+    # Found existing node in the list
+    #
     return node.value = new_value if node
 
-    @size += 1
-
+    # Adding new node
+    #
     new_level = level_number_generator.call(self)
     if new_level >= level
       (level..new_level).each do |level|
@@ -95,6 +106,10 @@ class SkipList
       new_node.forward[level] = update[level].forward_ptr_at(level)
       update[level].forward[level] = new_node
     end
+
+    @size += 1
+
+    new_value
   end
   alias []= insert
 

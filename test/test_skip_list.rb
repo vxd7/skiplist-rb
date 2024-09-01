@@ -33,6 +33,14 @@ class TestSkipList < Minitest::Test
     end
   end
 
+  def test_insert_method_return_value
+    value = 'abacaba'
+    assert_equal(value, skiplist[123] = value)
+
+    new_value = 'qwerty'
+    assert_equal(new_value, skiplist[123] = new_value)
+  end
+
   def test_changing_value
     elem = fill_skiplist(1)
 
@@ -102,7 +110,7 @@ class TestSkipList < Minitest::Test
   # Searching for the element with key = 3
   # should return this element
   #
-  def test_searching1
+  def test_searching_4_3_2
     @skiplist.level_number_generator = SimpleDeterministic.new([4, 3, 2])
 
     skiplist[2] = '2'
