@@ -3,14 +3,16 @@ require 'set'
 require 'debug'
 
 require_relative 'skip_list/node'
-require_relative 'skip_list/level_number_generator'
+require_relative 'skip_list/level_number_generators'
 
 class SkipList
-  attr_reader :max_level, :level_number_generator, :size
+  attr_reader :max_level, :p_value, :level_number_generator, :size
 
-  def initialize(max_level = 32, &block)
+  def initialize(max_level = 32, p_value = 0.5, &block)
     @max_level = max_level
-    @level_number_generator = block_given? ? block : LevelNumberGenerator
+    @p_value = p_value
+    @level_number_generator =
+      block_given? ? block : LevelNumberGenerators::InverseTransformGeometric
 
     @size = 0
   end
@@ -45,7 +47,7 @@ class SkipList
 
     @size += 1
 
-    new_level = level_number_generator.call(max_level)
+    new_level = level_number_generator.call(max_level, p_value)
     if new_level >= level
       (level..new_level).each do |level|
         update[level] = header
