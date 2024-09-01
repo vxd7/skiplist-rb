@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'singleton'
-require 'set'
-require 'debug'
-
 require_relative 'skip_list/node'
 require_relative 'skip_list/level_number_generators'
 
