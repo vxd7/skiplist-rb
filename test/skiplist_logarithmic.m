@@ -13,7 +13,21 @@ i = 0;
 hold on
 for [val, key] = skiplist
   marker = markers(mod(i, columns(markers)) + 1)
-  loglog([1: columns(val)], val, 'DisplayName', strrep(key, '_', '\_'), 'linewidth', 1.5, 'marker', marker);
+  display_name = strrep(key, '_', '\_')
+  color = 'green'
+
+  if (strncmp(display_name, 'fail', 4))
+    color = 'red'
+  endif
+
+  loglog(
+    [1: columns(val)], val,
+    'DisplayName', display_name,
+    'linewidth', 1.5,
+    'marker', marker,
+    'color', color
+  );
+
   i += 1;
 endfor
 set(legend('show'), 'fontsize', 17);
