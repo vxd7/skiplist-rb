@@ -12,11 +12,11 @@ class SkipList
     end
 
     def forward_ptr_at(lvl)
-      forward.fetch(lvl, default_ptr)
+      @forward.fetch(lvl, @default_ptr)
     end
 
     def level
-      forward.size
+      @forward.size
     end
 
     def traverse_level(lvl)
@@ -33,11 +33,7 @@ class SkipList
 
     def inspect
       "#<SkipList::Node of level #{level} " \
-        "with @key = #{key}, @value = #{value}>"
+        "with @key = #{@key}, @value = #{@value}>"
     end
-
-    private
-
-    attr_reader :default_ptr
   end
 end
