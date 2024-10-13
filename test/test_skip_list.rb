@@ -26,7 +26,7 @@ class TestSkipList < Minitest::Test
   end
 
   def test_multiple_insert_values
-    elems = fill_skiplist(100)
+    elems = fill_skiplist(600)
 
     elems.each do |elem|
       assert_equal(elem.to_s, skiplist[elem].value)
@@ -149,8 +149,9 @@ class TestSkipList < Minitest::Test
       elems << rand(500 * size)
     end
 
-    elems.each { |elem| skiplist[elem] = elem.to_s }
-    elems
+    elems.each do |elem|
+      skiplist[elem] = elem.to_s
+    end
   end
 
   def fill_skiplist_with_single_value

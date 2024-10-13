@@ -5,7 +5,7 @@ require_relative 'skip_list/level_number_generators'
 
 class SkipList
   attr_accessor :level_number_generator
-  attr_reader :size, :default_value
+  attr_reader :size
 
   # Default maximum number of levels possible in the
   # skiplist
@@ -20,12 +20,12 @@ class SkipList
   # Create new SkipList
   #
   def initialize
+    @size = 0
     @level_number_generator =
       LevelNumberGenerators::InverseTransformGeometric.new(
         max_level: DEFAULT_MAX_LEVEL,
         p_value: DEFAULT_P_VALUE
       )
-    @size = 0
   end
 
   # Search SkipList element by its key
@@ -41,8 +41,8 @@ class SkipList
     # Traverse levels starting with the highest
     # (with lowest number of elements)
     #
-    (0...level).reverse_each do |level|
-      current_node.traverse_level(level) do |node|
+    (0...level).reverse_each do |lvl|
+      current_node.traverse_level(lvl) do |node|
         # Stop iterating levels when we have already found
         # the element
         #
@@ -64,7 +64,7 @@ class SkipList
       # It is useful for some applications to record the
       # route the search takes
       #
-      yield(level, current_node) if block_given?
+      yield(lvl, current_node) if block_given?
     end
 
     # search_key does not exist in the list
@@ -84,17 +84,16 @@ class SkipList
   #
   def insert(search_key, new_value)
     update = []
-    node = search(search_key) do |level, element|
-      update[level] = element
+    node = search(search_key) do |lvl, element|
+      update[lvl] = element
     end
 
     # Found existing node in the list
     #
     return node.value = new_value if node
 
-    # Adding new node
-    #
     new_level = level_number_generator.call(self)
+
     if new_level >= level
       (level..new_level).each do |level|
         update[level] = header
@@ -102,9 +101,9 @@ class SkipList
     end
 
     new_node = Node.new(search_key, new_value)
-    (0..new_level).each do |level|
-      new_node.forward[level] = update[level].forward_ptr_at(level)
-      update[level].forward[level] = new_node
+    (0..new_level).each do |lvl|
+      new_node.forward[lvl] = update[lvl].forward_ptr_at(lvl)
+      update[lvl].forward[lvl] = new_node
     end
 
     @size += 1
