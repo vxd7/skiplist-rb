@@ -14,7 +14,7 @@ class SkipList
         @p_value = p_value
       end
 
-      def call(_skiplist)
+      def call(_skiplist = nil)
         lvl = (Math.log(1.0 - SecureRandom.rand)/Math.log(1.0 - p_value)).floor
         [lvl, max_level].min
       end
@@ -35,7 +35,7 @@ class SkipList
         @p_value = p_value
       end
 
-      def call(_skiplist)
+      def call(_skiplist = nil)
         lvl = 0
         loop do
           break if SecureRandom.rand >= p_value
@@ -55,7 +55,7 @@ class SkipList
         @values = convert_value(value)
       end
 
-      def call(_skiplist)
+      def call(_skiplist = nil)
         values.next
       end
 
