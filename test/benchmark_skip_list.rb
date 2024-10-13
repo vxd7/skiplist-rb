@@ -11,7 +11,7 @@ class BenchmarkSkipList < Minitest::Benchmark
   RANGE_MAX = 30000
 
   def self.bench_range
-    (1..RANGE_MAX).step(100)
+    (20000..RANGE_MAX).step(100)
   end
 
   def setup
