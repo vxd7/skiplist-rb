@@ -27,12 +27,15 @@ class BenchmarkSkipList < Minitest::Benchmark
     level_number_generator = SimpleDeterministic.new(entropy)
     @ranges = self.class.bench_range.each do |range|
       puts "Setup range: #{range}"
+      range_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       skiplist = SkipList.new
       skiplist.level_number_generator = level_number_generator
 
       @elems.take(range).each do |elem|
         skiplist[elem] = elem
       end
+      range_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      puts "Finished in #{range_end - range_start} seconds\n"
 
       @skiplists[range] = skiplist
     end
