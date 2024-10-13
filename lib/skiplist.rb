@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'skip_list/node'
-require_relative 'skip_list/level_number_generators'
+require_relative 'skiplist/version'
 
-class SkipList
+require_relative 'skiplist/node'
+require_relative 'skiplist/level_number_generators'
+
+class Skiplist
   attr_accessor :level_number_generator
   attr_reader :size
 
@@ -130,7 +132,7 @@ class SkipList
     @finish ||= Node.new(Float::INFINITY, nil)
   end
 
-  def pretty_print
+  def pretty_printt
     rows = [header.traverse_level(0).to_a[1...-1]]
     rows[0].each do |element|
       lvl = element.level - 1

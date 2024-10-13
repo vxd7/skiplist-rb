@@ -1,9 +1,6 @@
-require 'minitest/autorun'
+require 'test_helper'
 require 'minitest/benchmark'
-
-require 'set'
-require 'debug'
-require_relative '../skip_list'
+require 'skiplist'
 
 class BenchmarkSkipList < Minitest::Benchmark
   include SkipList::LevelNumberGenerators

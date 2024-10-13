@@ -1,4 +1,6 @@
-class SkipList
+# frozen_string_literal: true
+
+class Skiplist
   class Node
     attr_reader :key, :forward
     attr_accessor :value
@@ -32,7 +34,7 @@ class SkipList
     end
 
     def inspect
-      "#<SkipList::Node of level #{level} " \
+      "#<Skiplist::Node of level #{level} " \
         "with @key = #{@key}, @value = #{@value}>"
     end
   end

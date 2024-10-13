@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
-class SkipList
+class Skiplist
   module LevelNumberGenerators
     # Generate level number using inverse transform method
     # to get geometric distribution from uniformly distributed
@@ -15,7 +17,7 @@ class SkipList
       end
 
       def call(_skiplist = nil)
-        lvl = (Math.log(1.0 - SecureRandom.rand)/Math.log(1.0 - p_value)).floor
+        lvl = (Math.log(1.0 - SecureRandom.rand) / Math.log(1.0 - p_value)).floor
         [lvl, max_level].min
       end
     end

@@ -1,27 +1,30 @@
-require 'set'
-require 'debug'
-require 'minitest/autorun'
+# frozen_string_literal: true
 
-require_relative '../skip_list'
+require 'test_helper'
+require 'skiplist'
 
-class TestSkipList < Minitest::Test
-  include SkipList::LevelNumberGenerators
+class TestSkiplist < Minitest::Test
+  include Skiplist::LevelNumberGenerators
 
   attr_reader :skiplist
 
   def setup
-    @skiplist = SkipList.new
+    @skiplist = Skiplist.new
+  end
+
+  def test_that_it_has_a_version_number
+    refute_nil ::Skiplist::VERSION
   end
 
   def test_simple_one_value_insert
     elem = fill_skiplist(1)
-   
+
     assert_equal(elem.to_s, skiplist[elem].value)
   end
 
   def test_search_value_not_exists
     elem = fill_skiplist(1)
-   
+
     assert_nil(skiplist[elem + 1])
   end
 
@@ -116,7 +119,7 @@ class TestSkipList < Minitest::Test
     skiplist[2] = '2'
     skiplist[4] = '4'
     skiplist[3] = '3'
-    
+
     assert_equal('3', skiplist[3].value)
   end
 
