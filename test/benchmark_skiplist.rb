@@ -1,9 +1,8 @@
 require 'test_helper'
 require 'minitest/benchmark'
-require 'skiplist'
 
-class BenchmarkSkipList < Minitest::Benchmark
-  include SkipList::LevelNumberGenerators
+class BenchmarkSkiplist < Minitest::Benchmark
+  include Skiplist::LevelNumberGenerators
 
   RANGE_MAX = 30000
 
@@ -16,8 +15,8 @@ class BenchmarkSkipList < Minitest::Benchmark
     @elems = generate_random_values(RANGE_MAX).to_a
 
     gen = InverseTransformGeometric.new(
-      max_level: SkipList::DEFAULT_MAX_LEVEL,
-      p_value: SkipList::DEFAULT_P_VALUE
+      max_level: Skiplist::DEFAULT_MAX_LEVEL,
+      p_value: Skiplist::DEFAULT_P_VALUE
     )
     entropy = Array.new(100) { gen.call }.cycle
 
@@ -25,7 +24,7 @@ class BenchmarkSkipList < Minitest::Benchmark
     @ranges = self.class.bench_range.each do |range|
       puts "Setup range: #{range}"
       range_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      skiplist = SkipList.new
+      skiplist = Skiplist.new
       skiplist.level_number_generator = level_number_generator
 
       @elems.take(range).each do |elem|
