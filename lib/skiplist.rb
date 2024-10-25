@@ -30,6 +30,23 @@ class Skiplist
       )
   end
 
+  def full_search(search_key)
+    current_node = header
+
+    (0...level).reverse_each do |lvl|
+      current_node.traverse_level(lvl) do |node|
+        break if node.key >= search_key
+
+        current_node = node
+      end
+
+      yield(lvl, current_node)
+    end
+
+    current_node = current_node.forward_ptr_at(0)
+    current_node if current_node.key == search_key
+  end
+
   # Search SkipList element by its key
   #
   # @param search_key [Integer] the key to search for
@@ -37,7 +54,7 @@ class Skiplist
   #   {SkipList::Node} object if the element is found
   #   and nil otherwise
   #
-  def search(search_key)
+  def search1(search_key)
     current_node = header
 
     # Traverse levels starting with the highest
@@ -63,14 +80,24 @@ class Skiplist
 
       # Yield the element just before the level transition
       #
-      # It is useful for some applications to record the
-      # route the search takes
+      # It is useful to record the route the search takes
       #
       yield(lvl, current_node) if block_given?
     end
 
     # search_key does not exist in the list
     #
+    nil
+  end
+
+  def search(search_key)
+    full_search(search_key) do |lvl, node|
+      node = node.forward_ptr_at(lvl)
+      return node if node.key == search_key
+
+      yield(lvl, node) if block_given?
+    end
+
     nil
   end
   alias [] search
@@ -86,7 +113,7 @@ class Skiplist
   #
   def insert(search_key, new_value)
     update = []
-    node = search(search_key) do |lvl, element|
+    node = full_search(search_key) do |lvl, element|
       update[lvl] = element
     end
 
@@ -114,6 +141,35 @@ class Skiplist
   end
   alias []= insert
 
+  def delete(search_key)
+    update = []
+    node = full_search(search_key) do |lvl, element|
+      update[lvl] = element
+    end
+
+    # Did not find node to delete
+    #
+    return unless node
+
+    (0...node.level).each do |lvl|
+      update[lvl].forward[lvl] = node.forward[lvl]
+    end
+
+    @size -= 1
+
+    # Find first header forward pointer which points
+    # directly at the finish node.
+    #
+    idx = header.forward.find_index { |e| e == finish }
+    return unless idx
+
+    # Pointers from header node directly to finish node can
+    # be deleted. This will lower the level of the whole
+    # skiplist by at least one level
+    #
+    header.forward.slice!(idx..-1)
+  end
+
   # The level of SkipList.
   #
   # It is equal to the level of its header due to the
@@ -132,7 +188,7 @@ class Skiplist
     @finish ||= Node.new(Float::INFINITY, nil)
   end
 
-  def pretty_printt
+  def pretty_print
     rows = [header.traverse_level(0).to_a[1...-1]]
     rows[0].each do |element|
       lvl = element.level - 1
