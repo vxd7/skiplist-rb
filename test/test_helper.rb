@@ -11,7 +11,7 @@ module SkiplistFillingHelpers
 
   def fill_skiplist_deterministic(skiplist, level_numbers)
     skiplist.level_number_generator =
-      Skiplist::LevelNumberGenerators::SimpleDeterministic.new(level_numbers)
+      Skiplist::LevelNumberGenerators::Deterministic.new(level_numbers)
 
     (0...level_numbers.size).to_a.each do |i|
       skiplist[i] = i
@@ -51,8 +51,8 @@ module SkiplistFillingHelpers
   def setup_benchmark_skiplist(level_numbers, elements)
     skiplist = Skiplist.new
 
-    gen = Skiplist::LevelNumberGenerators::SimpleDeterministic.new(level_numbers.cycle)
-    skiplist.level_number_generator = gen
+    skiplist.level_number_generator =
+      Skiplist::LevelNumberGenerators::Deterministic.new(level_numbers.cycle)
 
     puts "Fill skiplist with #{elements.size} elements"
     range_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -66,7 +66,7 @@ module SkiplistFillingHelpers
   end
 
   def geometric_distribution(size)
-    gen = Skiplist::LevelNumberGenerators::InverseTransformGeometric.new(
+    gen = Skiplist::LevelNumberGenerators::Geometric.new(
       max_level: Skiplist::DEFAULT_MAX_LEVEL,
       p_value: Skiplist::DEFAULT_P_VALUE
     )

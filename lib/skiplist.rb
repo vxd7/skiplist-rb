@@ -23,11 +23,10 @@ class Skiplist
   #
   def initialize
     @size = 0
-    @level_number_generator =
-      LevelNumberGenerators::InverseTransformGeometric.new(
-        max_level: DEFAULT_MAX_LEVEL,
-        p_value: DEFAULT_P_VALUE
-      )
+    @level_number_generator = LevelNumberGenerators::Geometric.new(
+      max_level: DEFAULT_MAX_LEVEL,
+      p_value: DEFAULT_P_VALUE
+    )
   end
 
   # Search SkipList element by its key

@@ -8,7 +8,7 @@ class Skiplist
     # to get geometric distribution from uniformly distributed
     # random variables in O(1) time complexity
     #
-    class InverseTransformGeometric
+    class Geometric
       attr_reader :max_level, :p_value
 
       def initialize(max_level:, p_value:)
@@ -50,7 +50,10 @@ class Skiplist
       end
     end
 
-    class SimpleDeterministic
+    # Generate level numbers using provided values from Array,
+    # Enumerator or single numeric value
+    #
+    class Deterministic
       attr_reader :values
 
       def initialize(value)
