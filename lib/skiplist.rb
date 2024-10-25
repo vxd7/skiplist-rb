@@ -141,6 +141,11 @@ class Skiplist
   end
   alias []= insert
 
+  # Delete skiplist node associated with the search_key
+  #
+  # @param [search_key] Integer
+  # @return [Skiplist::Node, NilClass] returns deleted node
+  #   object or nil if such node does not exist in skiplist
   def delete(search_key)
     update = []
     node = full_search(search_key) do |lvl, element|
@@ -161,13 +166,15 @@ class Skiplist
     # directly at the finish node.
     #
     idx = header.forward.find_index { |e| e == finish }
-    return unless idx
+    return node unless idx
 
     # Pointers from header node directly to finish node can
     # be deleted. This will lower the level of the whole
     # skiplist by at least one level
     #
     header.forward.slice!(idx..-1)
+
+    node
   end
 
   # The level of SkipList.

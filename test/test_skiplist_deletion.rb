@@ -28,6 +28,16 @@ class TestSkiplistDeletion < Minitest::Test
     refute_nil(@skiplist[0])
   end
 
+  def test_delete_return_value
+    @skiplist[0] = '0'
+
+    node = @skiplist.delete(0)
+    assert_equal(0, node.key)
+    assert_equal('0', node.value)
+
+    assert_nil(@skiplist.delete(123))
+  end
+
   def test_skiplist_size_after_deletion
     size = 100
     elements = fill_skiplist(size)
@@ -75,8 +85,9 @@ class TestSkiplistDeletion < Minitest::Test
       @skiplist[i] = i.to_s
     end
 
-    @skiplist.delete(0)
+    deleted_node = @skiplist.delete(0)
 
+    assert_equal(0, deleted_node.key)
     assert_equal(3, @skiplist.level)
   end
 
