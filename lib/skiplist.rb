@@ -33,11 +33,14 @@ class Skiplist
   # Search SkipList element by its key
   #
   # @param search_key [Integer] the key to search for
+  # @param full_search [TrueClass, FalseClass] (false) whether to
+  #   continue iteration after the element is found on some non-zero'th
+  #   level
   # @return [SkipList::Node, NilClass] will return the
   #   {SkipList::Node} object if the element is found
   #   and nil otherwise
   #
-  def search(search_key)
+  def search(search_key, full_search: false)
     current_node = header
 
     # Traverse levels starting with the highest
@@ -46,14 +49,17 @@ class Skiplist
     (0...level).reverse_each do |lvl|
       current_node.traverse_level(lvl) do |node|
         # Stop iterating levels when we have already found
-        # the element
+        # the element and full search is not requested
         #
-        return node if node.key == search_key
+        return node if !full_search && node.key == search_key
 
         # Level change to lower level is needed if the
-        # current element is larger than the one searched for
+        # current element is larger than the one searched for;
         #
-        break if node.key > search_key
+        # If full search is not requested we will change the
+        # level just before the found element
+        #
+        break if node.key >= search_key
 
         # Current element key is lower than the searched for
         # key. Continue iteration on the current level
@@ -63,15 +69,20 @@ class Skiplist
 
       # Yield the element just before the level transition
       #
-      # It is useful for some applications to record the
-      # route the search takes
+      # It is useful to record the route the search takes
       #
       yield(lvl, current_node) if block_given?
     end
 
-    # search_key does not exist in the list
+    # If the searched for element exists in the sliplist and
+    # full search is requested then we will stop at the
+    # zero'th level just before searched for element;
     #
-    nil
+    # If the element does not exist then we will stop
+    # just before the finish element of the zero'th level
+    #
+    current_node = current_node.forward_ptr_at(0)
+    current_node if current_node.key == search_key
   end
   alias [] search
 
@@ -114,6 +125,42 @@ class Skiplist
   end
   alias []= insert
 
+  # Delete skiplist node associated with the search_key
+  #
+  # @param [search_key] Integer
+  # @return [Skiplist::Node, NilClass] returns deleted node
+  #   object or nil if such node does not exist in skiplist
+  def delete(search_key)
+    update = []
+    node = search(search_key, full_search: true) do |lvl, element|
+      update[lvl] = element
+    end
+
+    # Did not find node to delete
+    #
+    return unless node
+
+    (0...node.level).each do |lvl|
+      update[lvl].forward[lvl] = node.forward[lvl]
+    end
+
+    @size -= 1
+
+    # Find first header forward pointer which points
+    # directly at the finish node.
+    #
+    idx = header.forward.find_index { |e| e == finish }
+    return node unless idx
+
+    # Pointers from header node directly to finish node can
+    # be deleted. This will lower the level of the whole
+    # skiplist by at least one level
+    #
+    header.forward.slice!(idx..-1)
+
+    node
+  end
+
   # The level of SkipList.
   #
   # It is equal to the level of its header due to the
@@ -132,7 +179,7 @@ class Skiplist
     @finish ||= Node.new(Float::INFINITY, nil)
   end
 
-  def pretty_printt
+  def pretty_print
     rows = [header.traverse_level(0).to_a[1...-1]]
     rows[0].each do |element|
       lvl = element.level - 1
