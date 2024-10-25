@@ -9,24 +9,9 @@ class Skiplist
   attr_accessor :level_number_generator
   attr_reader :size
 
-  # Default maximum number of levels possible in the
-  # skiplist
-  #
-  DEFAULT_MAX_LEVEL = 32
-
-  # Default parameter for Geometric distribution
-  # used for new level number generation
-  #
-  DEFAULT_P_VALUE = 0.5
-
-  # Create new SkipList
-  #
   def initialize
     @size = 0
-    @level_number_generator = LevelNumberGenerators::Geometric.new(
-      max_level: DEFAULT_MAX_LEVEL,
-      p_value: DEFAULT_P_VALUE
-    )
+    @level_number_generator = LevelNumberGenerators::Geometric.new
   end
 
   # Search SkipList element by its key

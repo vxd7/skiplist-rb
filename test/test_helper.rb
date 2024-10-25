@@ -66,10 +66,7 @@ module SkiplistFillingHelpers
   end
 
   def geometric_distribution(size)
-    gen = Skiplist::LevelNumberGenerators::Geometric.new(
-      max_level: Skiplist::DEFAULT_MAX_LEVEL,
-      p_value: Skiplist::DEFAULT_P_VALUE
-    )
+    gen = Skiplist::LevelNumberGenerators::Geometric.new
 
     Array.new(size) { gen.call }
   end
