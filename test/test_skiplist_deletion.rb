@@ -98,16 +98,28 @@ class TestSkiplistDeletion < Minitest::Test
   # L4: H   0       2                   F
   def test_delete_first_element
     level_numbers = [4, 3, 4, 1, 0, 0, 1]
-    @skiplist.level_number_generator = SimpleDeterministic.new(level_numbers)
-
-    elements = (0...level_numbers.size).to_a
-    elements.each do |i|
-      @skiplist[i] = i.to_s
-    end
+    elements = fill_skiplist_deterministic(@skiplist, level_numbers)
 
     refute_nil(@skiplist.delete(0))
 
     elements[1..].each do |elem|
+      refute_nil(@skiplist[elem])
+    end
+  end
+
+  # Test that the last element (just before finish element)
+  # can be successfully deleted
+  #
+  # L0: H   0   1   2   F
+  # L1: H   0   1   2   F
+  # L2: H   0   1   2   F
+  # L3: H           2   F
+  # L4: H           2   F
+  def test_delete_last_element
+    elements = fill_skiplist_deterministic(@skiplist, [2, 2, 4])
+
+    refute_nil(@skiplist.delete(2))
+    elements[..-2].each do |elem|
       refute_nil(@skiplist[elem])
     end
   end
@@ -122,13 +134,7 @@ class TestSkiplistDeletion < Minitest::Test
   # L3: H   0           F
   # L4: H   0           F
   def test_level_truncation_after_deletion
-    level_numbers = [4, 2, 1]
-    @skiplist.level_number_generator = SimpleDeterministic.new(level_numbers)
-
-    elements = (0...level_numbers.size).to_a
-    elements.each do |i|
-      @skiplist[i] = i.to_s
-    end
+    fill_skiplist_deterministic(@skiplist, [4, 2, 1])
 
     deleted_node = @skiplist.delete(0)
 

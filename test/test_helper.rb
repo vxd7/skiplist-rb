@@ -9,8 +9,17 @@ require 'minitest/autorun'
 module SkiplistFillingHelpers
   private
 
+  def fill_skiplist_deterministic(skiplist, level_numbers)
+    skiplist.level_number_generator =
+      Skiplist::LevelNumberGenerators::SimpleDeterministic.new(level_numbers)
+
+    (0...level_numbers.size).to_a.each do |i|
+      skiplist[i] = i
+    end
+  end
+
   def fill_skiplist(skiplist, size)
-    return fill_skiplist_single_value(skiplist) if size == 1
+    return rand(500).tap { |n| skiplist[n] = n } if size == 1
 
     elems = Set.new
     loop do
@@ -20,14 +29,7 @@ module SkiplistFillingHelpers
     end
 
     elems.each do |elem|
-      skiplist[elem] = elem.to_s
+      skiplist[elem] = elem
     end
-  end
-
-  def fill_skiplist_single_value(skiplist)
-    elem = rand(500)
-
-    skiplist[elem] = elem.to_s
-    elem
   end
 end

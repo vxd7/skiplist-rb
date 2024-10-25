@@ -18,7 +18,7 @@ class TestSkiplist < Minitest::Test
   def test_simple_one_value_insert
     elem = fill_skiplist(@skiplist, 1)
 
-    assert_equal(elem.to_s, @skiplist[elem].value)
+    assert_equal(elem, @skiplist[elem].value)
   end
 
   def test_search_value_not_exists
@@ -31,7 +31,7 @@ class TestSkiplist < Minitest::Test
     elems = fill_skiplist(@skiplist, 600)
 
     elems.each do |elem|
-      assert_equal(elem.to_s, @skiplist[elem].value)
+      assert_equal(elem, @skiplist[elem].value)
     end
   end
 
@@ -137,7 +137,7 @@ class TestSkiplist < Minitest::Test
 
     assert_equal(1, @skiplist.level)
     elems.each do |elem|
-      assert_equal(elem.to_s, @skiplist[elem].value)
+      assert_equal(elem, @skiplist[elem].value)
     end
   end
 end
