@@ -10,11 +10,11 @@ class Skiplist
       @value = value
       @forward = []
 
-      @default_ptr = default
+      @default_forward_ptr = default
     end
 
     def forward_ptr_at(lvl)
-      @forward.fetch(lvl, @default_ptr)
+      @forward.fetch(lvl, @default_forward_ptr)
     end
 
     def level
