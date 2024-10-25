@@ -4,6 +4,7 @@ require 'test_helper'
 
 class TestSkiplistDeletion < Minitest::Test
   include Skiplist::LevelNumberGenerators
+  include SkiplistFillingHelpers
 
   def setup
     @skiplist = Skiplist.new
@@ -13,7 +14,7 @@ class TestSkiplistDeletion < Minitest::Test
   # after it was deleted
   #
   def test_simple_delete
-    element = fill_skiplist(10).take(1).first
+    element = fill_skiplist(@skiplist, 10).take(1).first
 
     @skiplist.delete(element)
     assert_nil(@skiplist[element])
@@ -74,7 +75,7 @@ class TestSkiplistDeletion < Minitest::Test
   #
   def test_skiplist_size_after_deletion
     size = 100
-    elements = fill_skiplist(size)
+    elements = fill_skiplist(@skiplist, size)
 
     to_delete_size = rand(10..20)
     elements.to_a.sample(to_delete_size).each do |to_delete|
@@ -133,20 +134,5 @@ class TestSkiplistDeletion < Minitest::Test
 
     assert_equal(0, deleted_node.key)
     assert_equal(3, @skiplist.level)
-  end
-
-  private
-
-  def fill_skiplist(size)
-    elems = Set.new
-    loop do
-      break if elems.size >= size
-
-      elems << rand(500 * size)
-    end
-
-    elems.each do |elem|
-      @skiplist[elem] = elem.to_s
-    end
   end
 end
