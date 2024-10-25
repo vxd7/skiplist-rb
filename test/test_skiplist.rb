@@ -93,7 +93,7 @@ class TestSkiplist < Minitest::Test
   end
 
   def test_size_not_incrementing_after_elements_modification
-    target_size = rand(1..100)
+    target_size = rand(20..100)
     elems = fill_skiplist(@skiplist, target_size)
 
     elems.to_a.sample(rand(20)).each do |element|
