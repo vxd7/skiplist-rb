@@ -3,7 +3,7 @@
 require_relative 'skiplist/version'
 
 require_relative 'skiplist/node'
-require_relative 'skiplist/level_number_generators'
+require_relative 'skiplist/level_number_generators/geometric'
 
 class Skiplist
   attr_accessor :level_number_generator

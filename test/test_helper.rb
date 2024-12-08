@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+
 require 'skiplist'
+require 'skiplist/level_number_generators/deterministic'
 require 'debug'
 
 require 'minitest/autorun'
