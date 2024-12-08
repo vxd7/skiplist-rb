@@ -9,9 +9,22 @@ class Skiplist
   attr_accessor :level_number_generator
   attr_reader :size
 
-  def initialize
+  # Create new Skiplist.
+  #
+  # Skiplist will use Geometric distribution for level
+  # number generator with default values supplied as
+  # arguments to the constructor
+  #
+  # @param max_level [Integer] level number cap
+  # @param p_value [Float] parameter of geometric
+  #   distribution
+  #
+  def initialize(max_level: 32, p_value: 0.5)
     @size = 0
-    @level_number_generator = LevelNumberGenerators::Geometric.new
+    @level_number_generator = LevelNumberGenerators::Geometric.new(
+      max_level,
+      p_value
+    )
   end
 
   # Search SkipList element by its key
