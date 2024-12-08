@@ -169,8 +169,10 @@ class Skiplist
     header.level
   end
 
-  def pretty_print
-    PrettyPrinter.new(self).call
+  def pretty_print(pp = nil)
+    result = PrettyPrinter.new(self).call
+
+    pp&.text(result) || result
   end
 
   def header
