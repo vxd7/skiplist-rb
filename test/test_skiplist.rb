@@ -52,7 +52,7 @@ class TestSkiplist < Minitest::Test
   end
 
   def test_single_level_pretty_print
-    @skiplist.level_number_generator = SimpleDeterministic.new(0)
+    @skiplist.level_number_generator = Deterministic.new(0)
 
     elem = fill_skiplist(@skiplist, 1)
 
@@ -62,7 +62,7 @@ class TestSkiplist < Minitest::Test
 
   def test_skip_list_level
     target_level = rand(1..20)
-    @skiplist.level_number_generator = SimpleDeterministic.new(target_level)
+    @skiplist.level_number_generator = Deterministic.new(target_level)
 
     fill_skiplist(@skiplist, 10)
 
@@ -115,7 +115,7 @@ class TestSkiplist < Minitest::Test
   # should return this element
   #
   def test_searching_4_3_2
-    @skiplist.level_number_generator = SimpleDeterministic.new([4, 3, 2])
+    @skiplist.level_number_generator = Deterministic.new([4, 3, 2])
 
     @skiplist[2] = '2'
     @skiplist[4] = '4'
@@ -131,7 +131,7 @@ class TestSkiplist < Minitest::Test
   end
 
   def test_searching_in_list_of_level_zero
-    @skiplist.level_number_generator = SimpleDeterministic.new(0)
+    @skiplist.level_number_generator = Deterministic.new(0)
 
     elems = fill_skiplist(@skiplist, 100)
 
